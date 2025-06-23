@@ -63,7 +63,7 @@ function finalImage = RL_tonemapper()
         % Step 4: Resaturate back to original chroma range
         reSat = resaturate(curved, saturationFactor);
 
-        % Optionally return final remaped image
+        % Optionally return final remapped image
         % finalImage = remap(reSat, [0 1], [0 maxHDR]);
 
         % Remap each stage for display
