@@ -1,4 +1,4 @@
-# rl_tonemapper
+# RL_tonemapper
 
 ## About
 
