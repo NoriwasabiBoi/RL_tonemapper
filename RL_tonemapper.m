@@ -12,7 +12,7 @@ function finalImage = RL_tonemapper()
 %
 
     % Load HDR image and get max value
-    rgbImageHDR = exrread('Testrender_v001_linear_rec709.exr');
+    rgbImageHDR = exrread('HDR_FILE.exr');
     maxHDR = max(rgbImageHDR(:));
 
     % Create GUI figure
