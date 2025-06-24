@@ -48,6 +48,8 @@ function finalImage = RL_tonemapper()
         saturationFactor = satSlider.Value;
         satText.String = sprintf('%.2f', saturationFactor);
 
+        val = 4;
+
         % Step 1: Normalize HDR to [0,1]
         img = remap(rgbImageHDR, [0 maxHDR], [0 1]);
 
@@ -56,7 +58,8 @@ function finalImage = RL_tonemapper()
 
         % Step 3: Tonemap (Reinhard + Log)
         outRemapCurve = remap(postSat, [0 1], [0 maxHDR]);
-        curved  = tonemapReinhard(outRemapCurve);
+        curved = tonemapSimpleReinhard(outRemapCurve);
+        %curved = tonemapReinhard(outRemapCurve, val);
         logCurve = tonemapLog(curved);
         curved = remap(logCurve, [0 maxHDR], [0 1]);
 
@@ -110,7 +113,12 @@ function out = tonemapLog(img)
     out = log(1 + img) ./ log(1 + max(img(:)) + epsilon);
 end
 
-function out = tonemapReinhard(img)
+function out = tonemapSimpleReinhard(img)
 % TONEMAPREINHARD - Applies Reinhard tone mapping: Lout = Lin / (1 + Lin)
     out = img ./ (1 + img);
+end
+
+function out = tonemapReinhard(img, val)
+% TONEMAPREINHARD - Applies Reinhard tone mapping: Lout = Lin / (1 + Lin)
+    out = img * (1 + img ./ val*val) ./ (1+img);
 end
