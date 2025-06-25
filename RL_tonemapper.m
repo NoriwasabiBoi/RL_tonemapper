@@ -12,7 +12,7 @@ function finalImage = RL_tonemapper()
 %
 
     % Load HDR image and get max value
-    rgbImageHDR = exrread('HDR_FILE.exr');
+    rgbImageHDR = exrread('Testrender_v001_linear_rec709.exr');
     maxHDR = max(rgbImageHDR(:));
 
     % Create GUI figure
@@ -27,16 +27,32 @@ function finalImage = RL_tonemapper()
     % Label for saturation
     uicontrol('Style','text','String','Saturation:', ...
               'FontSize', 12, 'FontWeight', 'bold', ...
-              'Position',[350 20 100 30], 'BackgroundColor', get(fig, 'Color'));
+              'Position',[300 65 100 30], 'BackgroundColor', get(fig, 'Color'));
+
+    % Label for Reinhard White
+    uicontrol('Style','text','String','White:', ...
+              'FontSize', 12, 'FontWeight', 'bold', ...
+              'Position',[300 25 100 30], 'BackgroundColor', get(fig, 'Color'));
 
     % Display for saturation value (updates live)
     satText = uicontrol('Style','text','String','0.70', ...
                         'FontSize', 12, ...
-                        'Position',[460 20 60 30], 'BackgroundColor', get(fig, 'Color'));
+                        'Position',[380 65 60 30], 'BackgroundColor', get(fig, 'Color'));
+
+    % Display for Reinhard White value (updates live)
+    reinhardText = uicontrol('Style','text','String','0.70', ...
+                        'FontSize', 12, ...
+                        'Position',[380 25 60 30], 'BackgroundColor', get(fig, 'Color'));
 
     % Slider for adjusting saturation
-    satSlider = uicontrol('Style','slider','Min',0,'Max',1,'Value',0.7,...
-        'Position',[540 25 400 20],...
+    satSlider = uicontrol('Style','slider','Min',0,'Max',1,'Value',0.5,...
+        'Position',[450 70 400 20],...
+        'SliderStep',[0.01 0.1],...
+        'Callback',@updateImage);
+
+    % Slider for adjusting Reinhard White
+    reinhardSlider = uicontrol('Style','slider','Min',1,'Max',maxHDR,'Value',13,...
+        'Position',[450 30 400 20],...
         'SliderStep',[0.01 0.1],...
         'Callback',@updateImage);
 
@@ -48,7 +64,10 @@ function finalImage = RL_tonemapper()
         saturationFactor = satSlider.Value;
         satText.String = sprintf('%.2f', saturationFactor);
 
-        val = 4;
+        reinhardFactor = reinhardSlider.Value;
+        reinhardText.String = sprintf('%.2f',reinhardFactor);
+
+        val = reinhardFactor;
 
         % Step 1: Normalize HDR to [0,1]
         img = remap(rgbImageHDR, [0 maxHDR], [0 1]);
@@ -58,10 +77,8 @@ function finalImage = RL_tonemapper()
 
         % Step 3: Tonemap (Reinhard + Log)
         outRemapCurve = remap(postSat, [0 1], [0 maxHDR]);
-        curved = tonemapSimpleReinhard(outRemapCurve);
-        %curved = tonemapReinhard(outRemapCurve, val);
-        logCurve = tonemapLog(curved);
-        curved = remap(logCurve, [0 maxHDR], [0 1]);
+        reinhard = tonemapReinhard(outRemapCurve, val);
+        curved = remap(reinhard, [0 maxHDR], [0 1]);
 
         % Step 4: Resaturate back to original chroma range
         reSat = resaturate(curved, saturationFactor);
@@ -76,7 +93,7 @@ function finalImage = RL_tonemapper()
         viewFinal  = remap(reSat, [0 1], [0 maxHDR]);
 
         % Display all four stages
-        imshow(viewImg,   [0 maxHDR], 'Parent', ax1); title(ax1, '1. Normalized Input');
+        imshow(viewImg,   [0 maxHDR], 'Parent', ax1); title(ax1, '1. Input Image');
         imshow(viewPost,  [0 maxHDR], 'Parent', ax2); title(ax2, '2. Desaturated');
         imshow(viewCurve, [0 maxHDR], 'Parent', ax3); title(ax3, '3. Tonemapped');
         imshow(viewFinal, [0 maxHDR], 'Parent', ax4); title(ax4, '4. Final Output');
@@ -120,5 +137,5 @@ end
 
 function out = tonemapReinhard(img, val)
 % TONEMAPREINHARD - Applies Reinhard tone mapping: Lout = Lin / (1 + Lin)
-    out = img * (1 + img ./ val*val) ./ (1+img);
+    out = img .* (1 + img ./ (val^2)) ./ (1 + img);
 end
