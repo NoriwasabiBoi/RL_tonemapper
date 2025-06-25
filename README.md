@@ -3,7 +3,7 @@
 ## About
 
 Custom MATLAB tonemapper for a university project.  
-Includes a simple GUI with a saturation slider that controls the strength of desaturation and resaturation.  
+Includes a simple GUI with a saturation slider that controls the strength of desaturation and resaturation and a slider for the white point for the reinhard tonemapping.  
 Visualizes the 4 main steps of the pipeline in a 2x2 layout:  
 1. Normalize  
 2. Desaturate  
