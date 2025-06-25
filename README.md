@@ -20,4 +20,4 @@ Meant for exploring basic color manipulation techniques in an HDR workflow.
   **Vlad Atanasiu (2025).** *Remap numerical values*. [MATLAB Central File Exchange](https://www.mathworks.com/matlabcentral/fileexchange/54404-remap-numerical-values). Accessed June 23, 2025.
 
 - The `tonemapping` is adapted from:
-  ** Reinhard, Erik, et al. (2002). Photographic tone reproduction for digital images (Tech. Rep. UUCS-02-001). School of Computing, University of Utah.** 
+  **Reinhard, Erik, et al.** (2002). [Photographic tone reproduction for digital images](https://www-old.cs.utah.edu/docs/techreports/2002/pdf/UUCS-02-001.pdf) (Tech. Rep. UUCS-02-001). School of Computing, University of Utah.
