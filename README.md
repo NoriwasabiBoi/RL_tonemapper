@@ -7,7 +7,7 @@ Includes a simple GUI with a saturation slider that controls the strength of des
 Visualizes the 4 main steps of the pipeline in a 2x2 layout:  
 1. Normalize  
 2. Desaturate  
-3. Tonemap (Reinhard + Log)  
+3. Tonemap (Reinhard)  
 4. Resaturate  
 
 Meant for exploring basic color manipulation techniques in an HDR workflow.
