@@ -123,19 +123,7 @@ function resat_RGB = resaturate(rgbImage, satFactor)
     resat_RGB = hsv2rgb(hsv);
 end
 
-function out = tonemapLog(img)
-% TONEMAPLOG - Applies logarithmic tone mapping to compress dynamic range.
-% Prevents log(0) with small epsilon offset.
-    epsilon = 1e-6;
-    out = log(1 + img) ./ log(1 + max(img(:)) + epsilon);
-end
-
-function out = tonemapSimpleReinhard(img)
-% TONEMAPREINHARD - Applies Reinhard tone mapping: Lout = Lin / (1 + Lin)
-    out = img ./ (1 + img);
-end
-
 function out = tonemapReinhard(img, val)
-% TONEMAPREINHARD - Applies Reinhard tone mapping: Lout = Lin / (1 + Lin)
+% TONEMAPREINHARD - Applies Reinhard tone mapping:
     out = img .* (1 + img ./ (val^2)) ./ (1 + img);
 end
